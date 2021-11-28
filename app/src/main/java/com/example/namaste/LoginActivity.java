@@ -3,6 +3,7 @@ package com.example.namaste;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +22,8 @@ public class LoginActivity extends AppCompatActivity {
     Button login, createAccount;
     FirebaseAuth auth;
 
+    ProgressDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,9 +36,14 @@ public class LoginActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Please Wait..");
+
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.show();
+
                 String emailText,pass;
                 emailText =  email.getText().toString();
                 pass = password.getText().toString();
@@ -43,8 +51,10 @@ public class LoginActivity extends AppCompatActivity {
                 auth.signInWithEmailAndPassword(emailText,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        dialog.dismiss();
+
                         if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(),DashboardScreen.class));
                         }
 
                         else{
